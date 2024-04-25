@@ -31,6 +31,10 @@ Include ScreenShot of `ls` command of your home directory on Spark-Edge server s
 
 You need to set your `SECRETKEY` and `ACCESSKEY` in your `.bashrc` file and import then into your PySpark files, no hard-coding of secrets.
 
+
+## Screenshots. 
+![Image](<part1.png>)
+
 ## Part Two - Data Engineering 
 
 The raw data records look like this:
