@@ -59,11 +59,13 @@ splitDF.write.format("csv").mode("overwrite").option("header","true").option("co
 # Writing the DataFrame to Parquet format
 splitDF.write.format("parquet").mode("overwrite").option("header","true").save("s3a://vrudra/80.parquet")
 
-# Reading the uncompressed CSV data
-writeDF=spark.read.csv('s3a://vrudra/80-uncompressed.csv')
+# # Reading the uncompressed CSV data
+# writeDF=spark.read.csv('s3a://vrudra/80-uncompressed.csv')
 
 # Coalescing DataFrame to a single partition for efficient writing
 colesce_df = writeDF.coalesce(1)
 
 # Writing the coalesced DataFrame to a single CSV file
 colesce_df.write.format("csv").mode("overwrite").option("header","true").save("s3a://vrudra/80.csv")
+
+spark.stop()
