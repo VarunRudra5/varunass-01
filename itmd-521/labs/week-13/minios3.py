@@ -1,7 +1,7 @@
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.types import IntegerType
-from pyspark.sql.functions import to_date,year, month, avg
+from pyspark.sql.functions import to_date,year, month, avg,to_timestamp ,stddev_pop
 
 
 
@@ -26,7 +26,7 @@ conf.set('spark.hadoop.fs.s3a.committer.name','magic')
 # Internal IP for S3 cluster proxy
 conf.set("spark.hadoop.fs.s3a.endpoint", "http://infra-minio-proxy-vm0.service.consul")
 
-spark = SparkSession.builder.appName("vrudra convert 80.txt to csv").config('spark.driver.host','spark-edge.service.consul').config(conf=conf).getOrCreate()
+spark = SparkSession.builder.appName("vrudra part-3").config('spark.driver.host','spark-edge.service.consul').config(conf=conf).getOrCreate()
 
 # df = spark.read.csv('s3a://itmd521/80.txt')
 
@@ -101,3 +101,4 @@ top_12 = result.select("Month", "StdDevTemperature").limit(12)
 top_12.write.csv("s3a://vrudra/part-three.csv", header=True)
 
 spark.stop()
+
