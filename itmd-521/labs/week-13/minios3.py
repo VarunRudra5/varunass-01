@@ -72,7 +72,7 @@ colesce_df.write.format("csv").mode("overwrite").option("header","true").save("s
 #part-2
 
 # Convert ObservationDate to timestamp
-writeDF = writeDF.withColumn("ObservationDate", to_timestamp(df["ObservationDate"], "dd/MM/yyyy"))
+writeDF = writeDF.withColumn("ObservationDate", to_timestamp(writeDF["ObservationDate"], "dd/MM/yyyy"))
 
 # Calculating the average temperature per month per year
 avg_temp_per_month_per_year = writeDF.withColumn("Year", writeDF["ObservationDate"].substr(1, 4)) \
