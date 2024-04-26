@@ -28,62 +28,59 @@ conf.set("spark.hadoop.fs.s3a.endpoint", "http://infra-minio-proxy-vm0.service.c
 
 spark = SparkSession.builder.appName("vrudra part-3").config('spark.driver.host','spark-edge.service.consul').config(conf=conf).getOrCreate()
 
-# df = spark.read.csv('s3a://itmd521/80.txt')
+df = spark.read.csv('s3a://itmd521/80.txt')
 
-# splitDF = df.withColumn('WeatherStation', df['_c0'].substr(5, 6)) \
-# .withColumn('WBAN', df['_c0'].substr(11, 5)) \
-# .withColumn('ObservationDate',to_date(df['_c0'].substr(16,8), 'yyyyMMdd')) \
-# .withColumn('ObservationHour', df['_c0'].substr(24, 4).cast(IntegerType())) \
-# .withColumn('Latitude', df['_c0'].substr(29, 6).cast('float') / 1000) \
-# .withColumn('Longitude', df['_c0'].substr(35, 7).cast('float') / 1000) \
-# .withColumn('Elevation', df['_c0'].substr(47, 5).cast(IntegerType())) \
-# .withColumn('WindDirection', df['_c0'].substr(61, 3).cast(IntegerType())) \
-# .withColumn('WDQualityCode', df['_c0'].substr(64, 1).cast(IntegerType())) \
-# .withColumn('SkyCeilingHeight', df['_c0'].substr(71, 5).cast(IntegerType())) \
-# .withColumn('SCQualityCode', df['_c0'].substr(76, 1).cast(IntegerType())) \
-# .withColumn('VisibilityDistance', df['_c0'].substr(79, 6).cast(IntegerType())) \
-# .withColumn('VDQualityCode', df['_c0'].substr(86, 1).cast(IntegerType())) \
-# .withColumn('AirTemperature', df['_c0'].substr(88, 5).cast('float') /10) \
-# .withColumn('ATQualityCode', df['_c0'].substr(93, 1).cast(IntegerType())) \
-# .withColumn('DewPoint', df['_c0'].substr(94, 5).cast('float')) \
-# .withColumn('DPQualityCode', df['_c0'].substr(99, 1).cast(IntegerType())) \
-# .withColumn('AtmosphericPressure', df['_c0'].substr(100, 5).cast('float')/ 10) \
-# .withColumn('APQualityCode', df['_c0'].substr(105, 1).cast(IntegerType())).drop('_c0')
+splitDF = df.withColumn('WeatherStation', df['_c0'].substr(5, 6)) \
+.withColumn('WBAN', df['_c0'].substr(11, 5)) \
+.withColumn('ObservationDate',to_date(df['_c0'].substr(16,8), 'yyyyMMdd')) \
+.withColumn('ObservationHour', df['_c0'].substr(24, 4).cast(IntegerType())) \
+.withColumn('Latitude', df['_c0'].substr(29, 6).cast('float') / 1000) \
+.withColumn('Longitude', df['_c0'].substr(35, 7).cast('float') / 1000) \
+.withColumn('Elevation', df['_c0'].substr(47, 5).cast(IntegerType())) \
+.withColumn('WindDirection', df['_c0'].substr(61, 3).cast(IntegerType())) \
+.withColumn('WDQualityCode', df['_c0'].substr(64, 1).cast(IntegerType())) \
+.withColumn('SkyCeilingHeight', df['_c0'].substr(71, 5).cast(IntegerType())) \
+.withColumn('SCQualityCode', df['_c0'].substr(76, 1).cast(IntegerType())) \
+.withColumn('VisibilityDistance', df['_c0'].substr(79, 6).cast(IntegerType())) \
+.withColumn('VDQualityCode', df['_c0'].substr(86, 1).cast(IntegerType())) \
+.withColumn('AirTemperature', df['_c0'].substr(88, 5).cast('float') /10) \
+.withColumn('ATQualityCode', df['_c0'].substr(93, 1).cast(IntegerType())) \
+.withColumn('DewPoint', df['_c0'].substr(94, 5).cast('float')) \
+.withColumn('DPQualityCode', df['_c0'].substr(99, 1).cast(IntegerType())) \
+.withColumn('AtmosphericPressure', df['_c0'].substr(100, 5).cast('float')/ 10) \
+.withColumn('APQualityCode', df['_c0'].substr(105, 1).cast(IntegerType())).drop('_c0')
 
-# # Writing the CSV data to 60-uncompressed folder
-# splitDF.write.format("csv").mode("overwrite").option("header","true").save("s3a://vrudra/80-uncompressed.csv")
+# Writing the CSV data to 60-uncompressed folder
+splitDF.write.format("csv").mode("overwrite").option("header","true").save("s3a://vrudra/80-uncompressed.csv")
 
-# # Writing the CSV data to 60-compressed folder with LZ4 compression
-# splitDF.write.format("csv").mode("overwrite").option("header","true").option("compression","lz4").save("s3a://vrudra/80-compressed.csv")
+# Writing the CSV data to 60-compressed folder with LZ4 compression
+splitDF.write.format("csv").mode("overwrite").option("header","true").option("compression","lz4").save("s3a://vrudra/80-compressed.csv")
 
-# # Writing the DataFrame to Parquet format
-# splitDF.write.format("parquet").mode("overwrite").option("header","true").save("s3a://vrudra/80.parquet")
+# Writing the DataFrame to Parquet format
+splitDF.write.format("parquet").mode("overwrite").option("header","true").save("s3a://vrudra/80.parquet")
 
-# # # Reading the uncompressed CSV data
-# writeDF=spark.read.csv('s3a://vrudra/80-uncompressed.csv')
+# # Reading the uncompressed CSV data
+writeDF=spark.read.csv('s3a://vrudra/80-uncompressed.csv')
 
-# # Coalescing DataFrame to a single partition for efficient writing
-# colesce_df = writeDF.coalesce(1)
+# Coalescing DataFrame to a single partition for efficient writing
+colesce_df = writeDF.coalesce(1)
 
-# # Writing the coalesced DataFrame to a single CSV file
-# colesce_df.write.format("csv").mode("overwrite").option("header","true").save("s3a://vrudra/80.csv")
+# Writing the coalesced DataFrame to a single CSV file
+colesce_df.write.format("csv").mode("overwrite").option("header","true").save("s3a://vrudra/80.csv")
 
 
 #part-2
 
-# Read the CSV file
-writeDF = spark.read.csv("s3a://vrudra/80-uncompressed.csv", header=True, inferSchema=True)
-
 # Convert ObservationDate to timestamp
 writeDF = writeDF.withColumn("ObservationDate", to_timestamp(df["ObservationDate"], "dd/MM/yyyy"))
 
-# Calculate the average temperature per month per year
+# Calculating the average temperature per month per year
 avg_temp_per_month_per_year = writeDF.withColumn("Year", writeDF["ObservationDate"].substr(1, 4)) \
     .withColumn("Month", df["ObservationDate"].substr(6, 2)) \
     .groupBy("Year", "Month") \
     .agg(avg("AirTemperature").alias("AvgTemperature"))
 
-# Calculate the standard deviation of temperature over the decade per month
+# Calculating the standard deviation of temperature over the decade per month
 std_dev_per_month = writeDF.withColumn("Month", df["ObservationDate"].substr(6, 2)) \
     .groupBy("Month") \
     .agg(stddev_pop("AirTemperature").alias("StdDevTemperature"))
