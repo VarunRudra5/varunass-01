@@ -76,12 +76,12 @@ writeDF = writeDF.withColumn("ObservationDate", to_timestamp(df["ObservationDate
 
 # Calculating the average temperature per month per year
 avg_temp_per_month_per_year = writeDF.withColumn("Year", writeDF["ObservationDate"].substr(1, 4)) \
-    .withColumn("Month", df["ObservationDate"].substr(6, 2)) \
+    .withColumn("Month", writeDF["ObservationDate"].substr(6, 2)) \
     .groupBy("Year", "Month") \
     .agg(avg("AirTemperature").alias("AvgTemperature"))
 
 # Calculating the standard deviation of temperature over the decade per month
-std_dev_per_month = writeDF.withColumn("Month", df["ObservationDate"].substr(6, 2)) \
+std_dev_per_month = writeDF.withColumn("Month", writeDF["ObservationDate"].substr(6, 2)) \
     .groupBy("Month") \
     .agg(stddev_pop("AirTemperature").alias("StdDevTemperature"))
 
