@@ -50,6 +50,8 @@ splitDF = df.withColumn('WeatherStation', df['_c0'].substr(5, 6)) \
 .withColumn('AtmosphericPressure', df['_c0'].substr(100, 5).cast('float')/ 10) \
 .withColumn('APQualityCode', df['_c0'].substr(105, 1).cast(IntegerType())).drop('_c0')
 
+
+#part-2
 # Writing the CSV data to 60-uncompressed folder
 splitDF.write.format("csv").mode("overwrite").option("header","true").save("s3a://vrudra/80-uncompressed.csv")
 
@@ -69,7 +71,7 @@ colesce_df = writeDF.coalesce(1)
 colesce_df.write.format("csv").mode("overwrite").option("header","true").save("s3a://vrudra/80.csv")
 
 
-#part-2
+#part-3
 
 # Convert ObservationDate to timestamp
 writeDF = writeDF.withColumn("ObservationDate", to_timestamp(writeDF["ObservationDate"], "dd/MM/yyyy"))
@@ -88,7 +90,7 @@ std_dev_per_month = writeDF.withColumn("Month", writeDF["ObservationDate"].subst
 # Join the two dataframes to get average temperature and standard deviation in one dataframe
 result = avg_temp_per_month_per_year.join(std_dev_per_month, "Month")
 
-# Write the result as a Parquet file
+# Writing the result as a Parquet file
 result.write.parquet("s3a://vrudra/part-three.parquet")
 
 # Take only 12 records (the month and standard deviations)
